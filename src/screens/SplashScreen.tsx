@@ -1,6 +1,11 @@
 import React from 'react';
 import {ActivityIndicator, StyleSheet, View, Text} from 'react-native';
 
+interface Props {
+  // render label below spinner
+  loadingLabel?: string;
+}
+
 /* Styles used in this functional component */
 const styles = StyleSheet.create({
   container: {
@@ -19,7 +24,7 @@ const styles = StyleSheet.create({
 });
 
 /* React functional component */
-const SplashScreen: React.FC = () => {
+const SplashScreen = ({loadingLabel}: Props) => {
   return (
     <View style={styles.container}>
       <ActivityIndicator
@@ -27,7 +32,7 @@ const SplashScreen: React.FC = () => {
         color="black"
         style={styles.activityIndicator}
       />
-      <Text style={styles.title}>Emerson Assignment</Text>
+      {loadingLabel ? <Text style={styles.title}>{loadingLabel}</Text> : null}
     </View>
   );
 };

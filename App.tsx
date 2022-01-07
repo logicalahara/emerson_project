@@ -43,7 +43,7 @@ const App = () => {
   }, []);
 
   if (loading) {
-    return <SplashScreen />;
+    return <SplashScreen loadingLabel="Emerson Assignment" />;
   }
 
   return (
@@ -81,6 +81,7 @@ const App = () => {
             paddingBottom: 5,
           },
           tabBarLabel: 'API',
+          title: 'Crypto Dashboard',
         }}
         name="api"
         component={DataFetchScreen}
