@@ -1,14 +1,9 @@
 import React, {ReactNode, useEffect, useState} from 'react';
-import {
-  TouchableOpacity,
-  View,
-  LogBox,
-  Alert,
-  ActivityIndicator,
-} from 'react-native';
+import {View, LogBox, Alert, ActivityIndicator} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {
   FlatList,
+  Pressable,
   Switch,
   Text,
   Center,
@@ -124,7 +119,7 @@ const BleCommScreen = () => {
           data={Object.values(scannedDevices)}
           renderItem={({item}) => {
             return (
-              <TouchableOpacity
+              <Pressable
                 onPress={async () => {
                   try {
                     // whether selected ble device is connected
@@ -157,7 +152,7 @@ const BleCommScreen = () => {
                     }
                   />
                 </Card>
-              </TouchableOpacity>
+              </Pressable>
             );
           }}
         />
