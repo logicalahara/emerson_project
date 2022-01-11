@@ -31,9 +31,9 @@ const BleCommScreen = () => {
   // accessing navigation hook
   const navigation = useNavigation();
   // maintaining scanned device(s) data
-  const [scannedDevices, setScannedDevices] = useState<
-    Record<string, number | string | null>
-  >({});
+  const [scannedDevices, setScannedDevices] = useState<Record<string, unknown>>(
+    {},
+  );
   // state to toggle bluetooth
   const [bluetoothToggle, setBluetoothToggle] = useState<boolean>(false);
   //
@@ -106,9 +106,10 @@ const BleCommScreen = () => {
   // storing count of scanned devices
   const devicesCount = Object.keys(scannedDevices).length;
   // storing connected device data to render on sheet
-  const pairedDeviceData = connectedDeviceId
-    ? scannedDevices[connectedDeviceId]
-    : null;
+  const pairedDeviceData: Record<
+    'id' | 'name' | 'manufacturerData' | 'rssi' | 'mtu',
+    string | number | null
+  > = connectedDeviceId ? scannedDevices[connectedDeviceId] : null;
 
   // handling render state on ble device search
   const handleBleRenderState = (): ReactNode | null => {
@@ -170,6 +171,7 @@ const BleCommScreen = () => {
             manager
               .cancelDeviceConnection(connectedDeviceId)
               .then(() => {
+                setConnectedDeviceId(null);
                 setShowSheet(false);
               })
               .catch(err => {
