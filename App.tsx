@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from 'react';
-import {SafeAreaView, StatusBar} from 'react-native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -9,9 +8,10 @@ import DataFetchScreen from './src/screens/DataFetchScreen';
 import BleCommScreen from './src/screens/BleCommScreen';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import SplashScreen from './src/screens/SplashScreen';
+import {LoginStackParamList, TabParamList} from './src/utils/types';
 
-const Stack = createNativeStackNavigator();
-const Tab = createBottomTabNavigator();
+const Stack = createNativeStackNavigator<LoginStackParamList>();
+const Tab = createBottomTabNavigator<TabParamList>();
 
 // login stack
 const LoginStack = () => (
@@ -42,6 +42,7 @@ const App = () => {
     }, 1000);
   }, []);
 
+  // renders spinner when app opens
   if (loading) {
     return <SplashScreen loadingLabel="Emerson Assignment" />;
   }
@@ -93,6 +94,7 @@ const App = () => {
             paddingBottom: 5,
           },
           tabBarLabel: 'BLE Communication',
+          headerShown: false,
         }}
         name="ble"
         component={BleCommScreen}
@@ -100,24 +102,5 @@ const App = () => {
     </Tab.Navigator>
   );
 };
-
-// const styles = StyleSheet.create({
-//   sectionContainer: {
-//     marginTop: 32,
-//     paddingHorizontal: 24,
-//   },
-//   sectionTitle: {
-//     fontSize: 24,
-//     fontWeight: '600',
-//   },
-//   sectionDescription: {
-//     marginTop: 8,
-//     fontSize: 18,
-//     fontWeight: '400',
-//   },
-//   highlight: {
-//     fontWeight: '700',
-//   },
-// });
 
 export default App;

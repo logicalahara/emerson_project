@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {View, useWindowDimensions} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {View, useWindowDimensions, StyleSheet} from 'react-native';
 import {
   Input,
   Stack,
@@ -14,18 +14,34 @@ import {Controller, useForm} from 'react-hook-form';
 import * as yup from 'yup';
 import {yupResolver} from '@hookform/resolvers/yup';
 import DigitalTransformationImg from '../assets/startup.png';
-import {LoginForm} from '../utils/types';
+import {indianMobRegex} from '../utils/globals';
+
+// screen props
+type LoginForm = {
+  // user email or mobile
+  userId: string;
+  // user password
+  password: string;
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    paddingVertical: 24,
+  },
+});
 
 const LoginScreen: React.FC = () => {
-  //
+  // accessing device's width and height
   const {width, height} = useWindowDimensions();
-  //
+  // navigation hook
   const navigation = useNavigation();
-  //
+  // switches email and mobile input state as per user input
   const [loginType, setLoginType] = useState<'email' | 'mobile'>('email');
-  //
+  // toggles visibility of password input
   const [showPassword, setShowPassword] = useState(false);
-  //
+  // form validation schema
   const validationSchema = yup.object({
     userId:
       loginType === 'email'
@@ -33,22 +49,34 @@ const LoginScreen: React.FC = () => {
             .string()
             .email('Please enter valid email address')
             .required('Please enter an email address')
-        : yup.string().matches(/^[6-9]\d{9}$/, 'Please enter valid mobile'),
+        : yup.string().matches(indianMobRegex, 'Please enter valid mobile'),
     password: yup.string().required('Please enter a password'),
   });
-  //
-  const {control, handleSubmit, formState} = useForm<LoginForm>({
+  // hook form instance
+  const {control, handleSubmit, formState, reset} = useForm<LoginForm>({
     resolver: yupResolver(validationSchema),
     defaultValues: {
       userId: '',
       password: '',
     },
-    // shouldUnregister: false,
   });
 
-  console.log('loginType', loginType);
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      reset();
+    });
+    // unmount
+    return () => unsubscribe();
+  }, [navigation, reset]);
+
+  // function to handle form submission
+  const onSubmit = () => {
+    navigation.navigate('homeScreen');
+    reset();
+  };
+
   return (
-    <ScrollView style={{flex: 1, backgroundColor: '#fff', paddingVertical: 24}}>
+    <ScrollView style={styles.container}>
       <View>
         <Heading style={{textAlign: 'center'}}>Welcome</Heading>
         <Image
@@ -69,7 +97,6 @@ const LoginScreen: React.FC = () => {
               onBlur={onBlur}
               value={value as string}
               onChangeText={text => {
-                console.log('text', Number(text));
                 if (text.length === 0 || isNaN(Number(text))) {
                   setLoginType('email');
                 } else {
@@ -107,7 +134,13 @@ const LoginScreen: React.FC = () => {
                     setShowPassword(!showPassword);
                   }}
                   variant="ghost">
-                  <Text style={{color: '#4285f4'}}>Show</Text>
+                  <Text
+                    style={{
+                      fontWeight: showPassword ? '700' : '500',
+                      fontSize: 12,
+                    }}>
+                    SHOW
+                  </Text>
                 </Button>
               }
             />
@@ -122,15 +155,9 @@ const LoginScreen: React.FC = () => {
         ) : null}
         <Button
           style={{backgroundColor: '#4285F4'}}
-          onPress={handleSubmit(
-            formData => {
-              console.log('formData', formData);
-              navigation.navigate('homeScreen');
-            },
-            err => {
-              console.log('formErr', err);
-            },
-          )}>
+          onPress={handleSubmit(onSubmit, formErr => {
+            console.log('Form Error', formErr);
+          })}>
           LOGIN
         </Button>
       </Stack>
